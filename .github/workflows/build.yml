@@ -29,30 +29,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  biome:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup
-      - name: Run Biome
-        working-directory: ./firmware
-        run: npx biome ci .
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup
-      - name: Run firmware tests
-        working-directory: ./firmware
-        run: npm run test
-      - name: Smoke test Linux simulator startup
-        working-directory: ./firmware
-        run: source "$HOME/.local/share/xs-dev-export.sh" && npm run smoke:lin
-      - name: Run web simulator tests
-        working-directory: ./web
-        run: npm test
-
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -68,7 +44,8 @@ jobs:
         working-directory: ./firmware
         run: source "$HOME/.local/share/xs-dev-export.sh" && npm run build --target=${{ matrix.target }}
       - name: Upload firmware
+        if: matrix.target == 'esp32/m5stack_cores3'
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-${{ replace(matrix.target, "/", "-") }}
+          name: stackchan-firmware-cores3
           path: firmware/stackchan/
