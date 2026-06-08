@@ -67,3 +67,8 @@ jobs:
       - name: Build firmware
         working-directory: ./firmware
         run: source "$HOME/.local/share/xs-dev-export.sh" && npm run build --target=${{ matrix.target }}
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ matrix.target }}
+          path: firmware/stackchan/
