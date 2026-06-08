@@ -70,5 +70,5 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-${{ matrix.target }}
+          name: firmware-${{ replace(matrix.target, "/", "-") }}
           path: firmware/stackchan/
