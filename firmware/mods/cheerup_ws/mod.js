@@ -19,7 +19,7 @@ function onRobotCreated(robot) {
     p: 0,
     r: 0,
   }
-  const ws = new WebSocket('ws://43.133.48.58:8765')
+  const ws = new WebSocket('ws://43.133.48.58:8000')
   ws.addEventListener('open', () => {
     trace('connected\n')
     robot.setTorque(true)
