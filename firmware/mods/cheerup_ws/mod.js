@@ -27,7 +27,14 @@ function onRobotCreated(robot) {
   })
   ws.addEventListener('message', (event) => {
     trace('received\n')
-    pose = JSON.parse(event.data)
+    const data = JSON.parse(event.data)
+    // Handle text-to-speech command
+    if (data.text && data.type === 'say') {
+      robot.say(data.text)
+      return
+    }
+    // Handle pose command (default)
+    pose = data
   })
   ws.addEventListener('close', () => {
     trace('disconnected\n')
