@@ -80,3 +80,19 @@ export function onRobotCreated(robot) {
   }
   trace('Connect with MCP client at http://[robot-ip]:8080/mcp\n')
 }
+
+// Auto-boot: skip the startup splash and create the robot immediately.
+// Without this the default onLaunch shows a Boot/Settings UI and waits
+// for a button press, which prevents onRobotCreated (and therefore the
+// MCP server) from ever running on headless deployments.
+export function onLaunch() {
+  return true
+}
+
+// Auto-boot: skip the startup splash and create the robot immediately.
+// Without this the default onLaunch shows a Boot/Settings UI and waits
+// for a button press, which prevents onRobotCreated (and therefore the
+// MCP server) from ever running on headless deployments.
+export function onLaunch() {
+  return true
+}
