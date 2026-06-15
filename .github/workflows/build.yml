@@ -43,9 +43,20 @@ jobs:
       - name: Build firmware
         working-directory: ./firmware
         run: source "$HOME/.local/share/xs-dev-export.sh" && npm run build --target=${{ matrix.target }}
+      - name: Locate firmware binaries
+        if: matrix.target == 'esp32/m5stack_cores3'
+        run: |
+          set -euo pipefail
+          BUILD_DIR="$HOME/.local/share/moddable/build/bin/esp32/m5stack_cores3"
+          echo "=== Build output ==="
+          ls -la "$BUILD_DIR/release/stackchan/" 2>/dev/null || ls -la "$BUILD_DIR/debug/stackchan/" 2>/dev/null || echo "No build output found"
+          find "$BUILD_DIR" -name "*.bin" -o -name "*.elf" 2>/dev/null | head -20
+          mkdir -p /tmp/firmware-artifact
+          find "$BUILD_DIR" -name "*.bin" -o -name "*.elf" 2>/dev/null | xargs -I {} cp {} /tmp/firmware-artifact/ 2>/dev/null || true
+          ls -la /tmp/firmware-artifact/
       - name: Upload firmware
         if: matrix.target == 'esp32/m5stack_cores3'
         uses: actions/upload-artifact@v4
         with:
           name: stackchan-firmware-cores3
-          path: firmware/stackchan/
+          path: /tmp/firmware-artifact/
