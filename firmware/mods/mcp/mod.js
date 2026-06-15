@@ -1,6 +1,38 @@
 import { MCPServerService } from 'mcp-server'
+import Preference from 'preference'
 
 const EMOTIONS = ['NEUTRAL', 'HAPPY', 'SLEEPY', 'DOUBTFUL', 'SAD', 'ANGRY', 'COLD', 'HOT']
+
+// Default WiFi credentials — only written if NVS is empty (i.e. after a
+// full flash that wiped WiFi config).  If the user has configured their
+// own network it is left untouched.
+const DEFAULT_WIFI = {
+  ssid: 'TP-Link_8238',
+  password: '48498128',
+}
+
+function ensureDefaultWifi() {
+  try {
+    const currentSsid = Preference.get('wifi', 'ssid')
+    if (!currentSsid) {
+      trace(`[mcp] no saved WiFi, baking default ${DEFAULT_WIFI.ssid}\n`)
+      Preference.set('wifi', 'ssid', DEFAULT_WIFI.ssid)
+      Preference.set('wifi', 'password', DEFAULT_WIFI.password)
+    } else {
+      trace(`[mcp] WiFi already configured: ${currentSsid}\n`)
+    }
+  } catch (e) {
+    trace(`[mcp] wifi pref error: ${e?.message ?? e}\n`)
+  }
+}
+
+// Skip the default startup splash and create the robot immediately.
+// Without this, onLaunch would block on the Boot/Settings UI and the
+// MCP server would never start on headless deployments.
+export function onLaunch() {
+  ensureDefaultWifi()
+  return true
+}
 
 export function onRobotCreated(robot) {
   trace('Starting MCP Server mod\n')
@@ -80,12 +112,3 @@ export function onRobotCreated(robot) {
   }
   trace('Connect with MCP client at http://[robot-ip]:8080/mcp\n')
 }
-
-// Auto-boot: skip the startup splash and create the robot immediately.
-// Without this the default onLaunch shows a Boot/Settings UI and waits
-// for a button press, which prevents onRobotCreated (and therefore the
-// MCP server) from ever running on headless deployments.
-export function onLaunch() {
-  return true
-}
-
