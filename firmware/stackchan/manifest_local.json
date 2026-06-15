@@ -1,17 +1,12 @@
 {
   "include": ["./manifest.json"],
+  "modules": {
+    "mod": "../mods/mcp/mod"
+  },
   "config": {
     "tts": {
-      "type": "voicevox",
-      "host": "192.168.7.136",
-      "port": 50021
-    },
-    "chat": {
-      "type": "openAIRealtime",
-      "modelID": "gpt-realtime-mini"
-    },
-    "driver": {
-      "type": "none"
+      "type": "local",
+      "sampleRate": 24000
     }
   }
 }
