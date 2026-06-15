@@ -48,11 +48,15 @@ jobs:
         run: |
           set -euo pipefail
           BUILD_DIR="$HOME/.local/share/moddable/build/bin/esp32/m5stack_cores3"
-          echo "=== Build output ==="
-          ls -la "$BUILD_DIR/release/stackchan/" 2>/dev/null || ls -la "$BUILD_DIR/debug/stackchan/" 2>/dev/null || echo "No build output found"
-          find "$BUILD_DIR" -name "*.bin" -o -name "*.elf" 2>/dev/null | head -20
+          echo "=== Build output dirs ==="
+          ls -la "$BUILD_DIR/" 2>/dev/null || echo "no $BUILD_DIR"
+          find "$BUILD_DIR" -maxdepth 3 -type d 2>/dev/null
+          echo "=== All .bin and .elf files ==="
+          find "$BUILD_DIR" -name "*.bin" -o -name "*.elf" 2>/dev/null
           mkdir -p /tmp/firmware-artifact
-          find "$BUILD_DIR" -name "*.bin" -o -name "*.elf" 2>/dev/null | xargs -I {} cp {} /tmp/firmware-artifact/ 2>/dev/null || true
+          find "$BUILD_DIR" -name "*.bin" -o -name "*.elf" 2>/dev/null | while read f; do
+            cp "$f" /tmp/firmware-artifact/
+          done
           ls -la /tmp/firmware-artifact/
       - name: Upload firmware
         if: matrix.target == 'esp32/m5stack_cores3'
